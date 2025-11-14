@@ -1,6 +1,6 @@
+using Kiwi2Shop.identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Kiwi2Shop.identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +15,7 @@ builder.Services.AddControllers();
 
 builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+
 
 // Configurar cookies para autenticación
 builder.Services.ConfigureApplicationCookie(options =>
@@ -90,8 +88,6 @@ if (app.Environment.IsDevelopment())
 }
 
 
-var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -101,10 +97,9 @@ if (app.Environment.IsDevelopment())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.MigrateAsync();
 }
-
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseHttpsRedirection();
-app.Run();
+await app.RunAsync();

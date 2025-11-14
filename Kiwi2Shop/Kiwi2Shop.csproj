@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kiwi2Shop.identity\Kiwi2Shop.identity.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.identity\Kiwi2Shop.Identity.csproj" />
   </ItemGroup>
 
 </Project>

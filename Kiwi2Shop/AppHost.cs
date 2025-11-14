@@ -22,15 +22,19 @@ var postgres = builder.AddPostgres("postgres")
 var identityDb = postgres.AddDatabase("identitydb");
 
 // Agregar la API de Identity
-var identityApi = builder.AddProject<Projects.Kiwi2Shop_identity>("identity-api")
+var identityApi = builder.AddProject<Projects.Kiwi2Shop_Identity>("identity-api")
+    .WaitFor(identityDb)
     .WithReference(identityDb);
 
-//// Agregar el proyecto React
-//var frontend = builder.AddNpmApp("kiwishop-web", "../kiwishop-web")
-//    .WithReference(identityApi)
-//    .WithHttpEndpoint(port: 5173, env: "PORT")
-//    .WithExternalHttpEndpoints()
-//    .PublishAsDockerFile();
+// ============================================
+// FRONTEND - React App
+// ============================================
+var frontendApp = builder.AddNpmApp("kiwi2shop-frontend", "../kiwi2shop.frontend","dev")
+    .WithReference(identityApi)
+    .WithEnvironment("VITE_IDENTITY_URL", identityApi.GetEndpoint("https"))
+    .WithHttpEndpoint(env: "PORT") // Let Aspire assign port dynamically
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
 
 
 builder.Build().Run();

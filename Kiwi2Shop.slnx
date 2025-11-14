@@ -1,8 +1,8 @@
 <Solution>
-  <Project Path="Kiwi2Shop.identity/Kiwi2Shop.identity.csproj" />
-  <Project Path="Kiwi2Shop.react/kiwi2shop.react.esproj">
+  <Project Path="Kiwi2Shop.Frontend/kiwi2shop.frontend.esproj" DisplayName="Kiwi2Shop.frontend">
     <Build />
     <Deploy />
   </Project>
+  <Project Path="Kiwi2Shop.identity/Kiwi2Shop.identity.csproj" DisplayName="Kiwi2Shop.Identity" />
   <Project Path="Kiwi2Shop/Kiwi2Shop.csproj" />
 </Solution>

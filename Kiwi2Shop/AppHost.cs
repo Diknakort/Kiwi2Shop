@@ -12,10 +12,10 @@ using Aspire.Hosting;
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-// 1. Agregar el servidor PostgreSQL (usar· la imagen oficial de Docker)
+// 1. Agregar el servidor PostgreSQL (usar√° la imagen oficial de Docker)
 var postgres = builder.AddPostgres("postgres")
                       .WithImage("postgres:latest")                   // Imagen oficial
-                      .WithEnvironment("POSTGRES_PASSWORD", "htVepm3{tDKv.p4H4wP9cF") // ContraseÒa del superusuario
+                      .WithEnvironment("POSTGRES_PASSWORD", "htVepm3{tDKv.p4H4wP9cF") // Contrase√±a del superusuario
                       .WithLifetime(ContainerLifetime.Persistent);     // Mantiene datos entre reinicios
                                                                        //.WithPort(5432, 5432);                          // Puerto mapeado (opcional)
 
@@ -35,6 +35,9 @@ var frontendApp = builder.AddNpmApp("kiwi2shop-frontend", "../kiwi2shop.frontend
     .WithHttpEndpoint(env: "PORT") // Let Aspire assign port dynamically
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
+
+
+builder.AddProject<Projects.Kiwi2Shop_apigateaway>("kiwi2shop-apigateaway");
 
 
 builder.Build().Run();

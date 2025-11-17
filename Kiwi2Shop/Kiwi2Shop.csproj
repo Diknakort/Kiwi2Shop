@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Kiwi2Shop.apigateaway\Kiwi2Shop.apigateaway.csproj" />
     <ProjectReference Include="..\Kiwi2Shop.identity\Kiwi2Shop.Identity.csproj" />
   </ItemGroup>
 

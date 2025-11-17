@@ -1,4 +1,5 @@
 using Kiwi2Shop.identity.Data;
+using Kiwi2Shop.identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 
@@ -39,6 +40,8 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+
+
 // Agregar Identity con configuración de cookies
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -77,8 +80,13 @@ var app = builder.Build();
 // Aplicar migraciones automáticamente
 using (var scope = app.Services.CreateScope())
 {
+    var services = scope.ServiceProvider;
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+    // Inicializar roles
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    await RoleSeeder.SeedRolesAsync(roleManager, userManager);
 }
 
 if (app.Environment.IsDevelopment())
@@ -97,6 +105,7 @@ if (app.Environment.IsDevelopment())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.MigrateAsync();
 }
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

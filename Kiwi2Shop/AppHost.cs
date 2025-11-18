@@ -16,7 +16,9 @@ var builder = DistributedApplication.CreateBuilder(args);
 var postgres = builder.AddPostgres("postgres")
                       .WithImage("postgres:latest")                   // Imagen oficial
                       .WithEnvironment("POSTGRES_PASSWORD", "htVepm3{tDKv.p4H4wP9cF") // Contraseña del superusuario
-                      .WithLifetime(ContainerLifetime.Persistent);     // Mantiene datos entre reinicios
+                      .WithLifetime(ContainerLifetime.Persistent)
+                      .WithDataVolume("identity-kiwi2")
+                      ;     // Mantiene datos entre reinicios
                                                                        //.WithPort(5432, 5432);                          // Puerto mapeado (opcional)
 
 var identityDb = postgres.AddDatabase("identitydb");
@@ -37,7 +39,8 @@ var frontendApp = builder.AddNpmApp("kiwi2shop-frontend", "../kiwi2shop.frontend
     .PublishAsDockerFile();
 
 
-builder.AddProject<Projects.Kiwi2Shop_apigateaway>("kiwi2shop-apigateaway");
+
+builder.AddProject<Projects.Kiwi2Shop_ApiGateWay>("kiwi2shop-apigateway");
 
 
 builder.Build().Run();

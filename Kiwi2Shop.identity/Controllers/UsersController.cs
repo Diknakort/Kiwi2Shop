@@ -1,16 +1,17 @@
-﻿using Kiwi2Shop.Identity.Models;
+﻿using Kiwi2Shop.identity.Models;
+using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Kiwi2Shop.Identity.Controllers
 {
 
     [Authorize]
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -28,10 +29,10 @@ namespace Kiwi2Shop.Identity.Controllers
         /// Obtener todos los usuarios
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<List<UserInfo>>> GetAllUsers()
+        public async Task<ActionResult<List<identity.Models.UserInfo>>> GetAllUsers()
         {
             var users = await _userManager.Users
-                .Select(u => new UserInfo
+                .Select(u => new Models.UserInfo
                 {
                     Id = u.Id,
                     Email = u.Email!,
@@ -46,7 +47,7 @@ namespace Kiwi2Shop.Identity.Controllers
         /// Obtener un usuario por ID
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserInfo>> GetUserById(string id)
+        public async Task<ActionResult<identity.Models.UserInfo>> GetUserById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
 
@@ -55,7 +56,7 @@ namespace Kiwi2Shop.Identity.Controllers
                 return NotFound(new { message = "Usuario no encontrado" });
             }
 
-            return Ok(new UserInfo
+            return base.Ok(new identity.Models.UserInfo
             {
                 Id = user.Id,
                 Email = user.Email!,

@@ -1,4 +1,4 @@
-namespace Kiwi2Shop.apigateaway;
+namespace Kiwi2Shop.ApiGateWay;
 
 public class WeatherForecast
 {

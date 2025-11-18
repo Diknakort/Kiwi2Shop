@@ -1,4 +1,5 @@
-﻿using Kiwi2Shop.Identity.Models;
+﻿using Kiwi2Shop.identity.Models;
+using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -260,7 +261,7 @@ namespace Kiwi2Shop.identity.Controllers
         /// Obtener usuarios por rol
         /// </summary>
         [HttpGet("{roleName}/users")]
-        public async Task<ActionResult<List<UserInfo>>> GetUsersInRole(string roleName)
+        public async Task<ActionResult<List<Models.UserInfo>>> GetUsersInRole(string roleName)
         {
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
             if (!roleExists)
@@ -270,7 +271,7 @@ namespace Kiwi2Shop.identity.Controllers
 
             var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
 
-            var userInfos = usersInRole.Select(u => new UserInfo
+            var userInfos = usersInRole.Select(u => new Models.UserInfo
             {
                 Id = u.Id,
                 Email = u.Email!,

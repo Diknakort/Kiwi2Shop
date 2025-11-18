@@ -1,4 +1,5 @@
-﻿using Kiwi2Shop.Identity.Models;
+﻿using Kiwi2Shop.identity.Models;
+using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -65,11 +66,11 @@ public class AuthController : ControllerBase
         // Iniciar sesión automáticamente
         await _signInManager.SignInAsync(user, isPersistent: false);
 
-        return Ok(new AuthResponse
+        return base.Ok(new AuthResponse
         {
             Success = true,
             Message = "Usuario registrado exitosamente",
-            User = new UserInfo
+            User = new identity.Models.UserInfo
             {
                 Id = user.Id,
                 Email = user.Email!,
@@ -118,11 +119,11 @@ public class AuthController : ControllerBase
 
         _logger.LogInformation("Usuario inició sesión: {Email}", request.Email);
 
-        return Ok(new AuthResponse
+        return base.Ok(new AuthResponse
         {
             Success = true,
             Message = "Inicio de sesión exitoso",
-            User = new UserInfo
+            User = new identity.Models.UserInfo
             {
                 Id = user.Id,
                 Email = user.Email!,
@@ -167,11 +168,11 @@ public class AuthController : ControllerBase
             });
         }
 
-        return Ok(new AuthResponse
+        return base.Ok(new AuthResponse
         {
             Success = true,
             Message = "Usuario autenticado",
-            User = new UserInfo
+            User = new identity.Models.UserInfo
             {
                 Id = user.Id,
                 Email = user.Email!,
@@ -231,19 +232,19 @@ public class AuthController : ControllerBase
             Message = "Contraseña cambiada exitosamente"
         });
     }
-    public class AuthResponse
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public UserInfo? User { get; set; }
-        public List<string> Roles { get; set; } = new(); // NUEVO
-        public List<string> Errors { get; set; } = new();
-    }
+    //public class AuthResponse
+    //{
+    //    public bool Success { get; set; }
+    //    public string Message { get; set; } = string.Empty;
+    //    public identity.Models.UserInfo? User { get; set; }
+    //    public List<string> Roles { get; set; } = new(); // NUEVO
+    //    public List<string> Errors { get; set; } = new();
+    //}
 
-    public class UserInfo
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string? UserName { get; set; }
-    }
+    //public class UserInfo
+    //{
+    //    public string Id { get; set; } = string.Empty;
+    //    public string Email { get; set; } = string.Empty;
+    //    public string? UserName { get; set; }
+    //}
 }

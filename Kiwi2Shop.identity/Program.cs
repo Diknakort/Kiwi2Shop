@@ -36,6 +36,12 @@ builder.AddServiceDefaults();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Agregar Health checks 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("identitydb") ?? "");
+// --
+
+
 
 builder.Services.AddControllers();
 
@@ -133,7 +139,7 @@ if (app.Environment.IsDevelopment())
     await context.Database.MigrateAsync();
 }
 
-
+app.MapHealthChecks("/health");
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

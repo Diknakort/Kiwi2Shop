@@ -1,8 +1,36 @@
 using Kiwi2Shop.identity.Data;
+using Kiwi2Shop.identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+//using Scalar.AspNetCore.Extensions;
+//using Scalar.Extensions.Hosting;
+//using Scalar.Extensions.ServiceDefaults;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using System;
+using System.Threading;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using System.Collections.Generic;
+using Microsoft.Extensions.ServiceDiscovery;
+//using Aspire.Extensions.ServiceDefaults;
+//using Kiwi2Shop.identity.Features.Auth.V1;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Asp.Versioning;
+using Microsoft.OpenApi.Models;
+//using Kiwi2Shop.identity.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Aspire Service Defaults (OpenTelemetry, Health Checks, Service Discovery, Resilience)
+builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +67,8 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+
+
 // Agregar Identity con configuración de cookies
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -77,15 +107,20 @@ var app = builder.Build();
 // Aplicar migraciones automáticamente
 using (var scope = app.Services.CreateScope())
 {
+    var services = scope.ServiceProvider;
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+    // Inicializar roles
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    await RoleSeeder.SeedRolesAsync(roleManager, userManager);
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 
 
 // Configure the HTTP request pipeline.
@@ -97,6 +132,8 @@ if (app.Environment.IsDevelopment())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.MigrateAsync();
 }
+
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

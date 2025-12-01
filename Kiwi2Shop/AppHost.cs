@@ -8,9 +8,15 @@
 
 
 using Aspire.Hosting;
+using Aspire.Hosting.RabbitMQ; // Añadido para habilitar el método AddRabbitMQ
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var maildev = builder
+    .AddContainer("maildev", "maildev/maildev:latest") // nombre e imagen
+    .WithLifetime(ContainerLifetime.Persistent) // Mantiene datos entre reinicios
+    .WithHttpEndpoint(port: 1080, targetPort: 1080) // Puerto para la interfaz web de MailDev (TargetPort especificado)
+    .WithEndpoint(port: 1025, targetPort: 1025); // Puerto SMTP para enviar correos (TargetPort especificado)
 
 // 1. Agregar el servidor PostgreSQL (usará la imagen oficial de Docker)
 var postgres = builder.AddPostgres("postgres")
@@ -21,10 +27,30 @@ var postgres = builder.AddPostgres("postgres")
 
 var identityDb = postgres.AddDatabase("identitydb");
 
+var rabbit = builder
+    .AddRabbitMQ("rabbitmq")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume("rabbitmq-data")
+    .WithManagementPlugin();
+
+var redis = builder.AddRedis("redis")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume("redis-data-identity")
+    .WithRedisInsight();
+
 // Agregar la API de Identity
 var identityApi = builder.AddProject<Projects.Kiwi2Shop_Identity>("identity-api")
     .WaitFor(identityDb)
     .WithReference(identityDb);
+
+// Agregar la API de GateWay
+var gatewayApi = builder.AddProject<Projects.Kiwi2Shop_GateWay>("gateway-api")
+    .WaitFor(identityApi)
+    .WithReference(identityApi)
+    .WithReference(redis);
+
+//añadir referencia al servicio ORDERS y a PRODUCTS cuando existan
+
 
 // ============================================
 // FRONTEND - React App
@@ -35,6 +61,12 @@ var frontendApp = builder.AddNpmApp("kiwi2shop-frontend", "../kiwi2shop.frontend
     .WithHttpEndpoint(env: "PORT") // Let Aspire assign port dynamically
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
+
+
+builder.AddProject<Projects.Kiwi2Shop_reverseProxy>("kiwi2shop-reverseproxy");
+
+
+builder.AddProject<Projects.Kiwi2Shop_Notifications>("kiwi2shop-notifications");
 
 
 builder.Build().Run();

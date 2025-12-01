@@ -1,31 +1,13 @@
+using Asp.Versioning;
 using Kiwi2Shop.identity.Data;
 using Kiwi2Shop.identity.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
-//using Scalar.AspNetCore.Extensions;
-//using Scalar.Extensions.Hosting;
-//using Scalar.Extensions.ServiceDefaults;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using System;
-using System.Threading;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Builder;
-using System.Collections.Generic;
-using Microsoft.Extensions.ServiceDiscovery;
-//using Aspire.Extensions.ServiceDefaults;
-//using Kiwi2Shop.identity.Features.Auth.V1;
-using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using System.Text;
-using Asp.Versioning;
-using Microsoft.OpenApi.Models;
-//using Kiwi2Shop.identity.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,21 +16,21 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 // Agregar Health checks 
-builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("identitydb") ?? "");
+builder.Services.AddHealthChecks();
 // --
 
-
+builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
 
 builder.Services.AddControllers();
+
+builder.Services.AddOpenApi();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
-
 
 
 // Configurar cookies para autenticación
@@ -73,6 +55,38 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(),
+        new HeaderApiVersionReader("X-Api-Version"));
+})
+.AddMvc() // This is needed for controllers
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["JWT:Issuer"],
+                ValidAudience = builder.Configuration["JWT:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+            };
+        });
+
 
 
 // Agregar Identity con configuración de cookies
@@ -110,29 +124,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Aplicar migraciones automáticamente
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-    // Inicializar roles
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-    await RoleSeeder.SeedRolesAsync(roleManager, userManager);
-}
-
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.MapOpenApi();
+    app.MapScalarApiReference();
     app.UseSwaggerUI();
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

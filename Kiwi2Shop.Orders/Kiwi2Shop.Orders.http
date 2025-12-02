@@ -1,0 +1,6 @@
+@Kiwi2Shop.Orders_HostAddress = http://localhost:5138
+
+GET {{Kiwi2Shop.Orders_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

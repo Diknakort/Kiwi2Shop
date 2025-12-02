@@ -19,8 +19,4 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
 	</ItemGroup>
 
-	<ItemGroup>
-	 
-	</ItemGroup>
-
 </Project>

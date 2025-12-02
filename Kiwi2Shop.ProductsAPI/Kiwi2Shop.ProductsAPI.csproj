@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a61d8c41-23ec-4195-b1fa-28f5259f65cd</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
+	  <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+	  <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+	  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+	  <PackageReference Include="Scalar.AspNetCore" />
+	  <PackageReference Include="Asp.Versioning.Http" />
+	  <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" />
+	  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kiwi2Shop.ServiceDefaults\Kiwi2Shop.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.Shared\Kiwi2Shop.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

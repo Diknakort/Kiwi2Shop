@@ -9,6 +9,8 @@
   </Project>
   <Project Path="Kiwi2Shop.identity/Kiwi2Shop.identity.csproj" />
   <Project Path="Kiwi2Shop.Notifications/Kiwi2Shop.Notifications.csproj" />
+  <Project Path="Kiwi2Shop.OrdersAPI/Kiwi2Shop.OrdersAPI.csproj" />
+  <Project Path="Kiwi2Shop.ProductsAPI/Kiwi2Shop.ProductsAPI.csproj" />
   <Project Path="Kiwi2Shop.reverseProxy/Kiwi2Shop.reverseProxy.csproj" />
   <Project Path="Kiwi2Shop.ServiceDefaults/Kiwi2Shop.ServiceDefaults.csproj" Id="1cd976db-bbd5-4f45-a313-3612ae53c63e" />
   <Project Path="Kiwi2Shop.Shared/Kiwi2Shop.Shared.csproj" Id="b879e5e3-0a84-46ee-b78a-f7621db5fed4" />

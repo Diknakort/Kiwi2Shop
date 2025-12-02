@@ -24,6 +24,8 @@
     <ProjectReference Include="..\Kiwi2Shop.Frontend\kiwi2shop.frontend.esproj" />
     <ProjectReference Include="..\Kiwi2Shop.identity\Kiwi2Shop.Identity.csproj" />
     <ProjectReference Include="..\Kiwi2Shop.Notifications\Kiwi2Shop.Notifications.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.OrdersAPI\Kiwi2Shop.OrdersAPI.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.ProductsAPI\Kiwi2Shop.ProductsAPI.csproj" />
     <ProjectReference Include="..\Kiwi2Shop.reverseProxy\Kiwi2Shop.reverseProxy.csproj" />
 	  <ProjectReference Include="..\Kiwi2Shop.Shared\Kiwi2Shop.Shared.csproj" />
 	  <ProjectReference Include="..\Kiwi2Shop.ServiceDefaults\Kiwi2Shop.ServiceDefaults.csproj" />

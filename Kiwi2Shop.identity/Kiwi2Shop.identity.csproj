@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>1aad17a4-b333-4a9a-9f7d-52e55deb1349</UserSecretsId>
@@ -9,35 +9,30 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.5.2" />
-	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.10" />
-	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.11" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <PrivateAssets>all</PrivateAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2" />
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-	  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
-	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-	  <PackageReference Include="Scalar.AspNetCore" Version="2.10.3" />
-	  <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.2" />
-	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
-	  <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
-	  <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
-	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.1" />
+	  <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
+	  <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+	  	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+	  <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+	  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+	  <PackageReference Include="Scalar.AspNetCore" />
+	  <PackageReference Include="Asp.Versioning.Http" />
+	  <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+  <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Kiwi2Shop.ServiceDefaults\Kiwi2Shop.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Kiwi2Shop.Shared\Kiwi2Shop.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -52,16 +52,28 @@ public static class Extensions
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
             {
-                metrics.AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
+                metrics.AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
+
+                // Only add ASP.NET Core metrics for web applications
+                if (builder is WebApplicationBuilder)
+                {
+                    metrics.AddAspNetCoreInstrumentation();
+                }
             })
             .WithTracing(tracing =>
             {
-                tracing.AddAspNetCoreInstrumentation()
-                    // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
-                    //.AddGrpcClientInstrumentation()
-                    .AddHttpClientInstrumentation();
+                tracing.AddHttpClientInstrumentation()
+                    .AddSource("MassTransit");
+
+                // Only add ASP.NET Core tracing for web applications
+                if (builder is WebApplicationBuilder)
+                {
+                    tracing.AddAspNetCoreInstrumentation();
+                }
+
+                // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
+                //.AddGrpcClientInstrumentation()
             });
 
         builder.AddOpenTelemetryExporters();

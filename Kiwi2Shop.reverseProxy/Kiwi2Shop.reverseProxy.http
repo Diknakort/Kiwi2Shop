@@ -1,0 +1,6 @@
+@Kiwi2Shop.reverseProxy_HostAddress = http://localhost:5131
+
+GET {{Kiwi2Shop.reverseProxy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

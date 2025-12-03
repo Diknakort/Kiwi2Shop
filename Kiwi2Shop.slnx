@@ -1,10 +1,18 @@
 <Solution>
-  <Project Path="Kiwi2Shop.ApiGateWay/Kiwi2Shop.ApiGateWay.csproj" />
+  <Folder Name="/Elementos de la solución/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Kiwi2Shop.ApiGateWay/Kiwi2Shop.GateWay.csproj" />
   <Project Path="Kiwi2Shop.Frontend/kiwi2shop.frontend.esproj">
     <Build />
     <Deploy />
   </Project>
-  <Project Path="Kiwi2Shop.identity/Kiwi2Shop.identity.csproj" DisplayName="Kiwi2Shop.Identity" />
+  <Project Path="Kiwi2Shop.identity/Kiwi2Shop.identity.csproj" />
+  <Project Path="Kiwi2Shop.Notifications/Kiwi2Shop.Notifications.csproj" />
+  <Project Path="Kiwi2Shop.OrdersAPI/Kiwi2Shop.OrdersAPI.csproj" />
+  <Project Path="Kiwi2Shop.ProductsAPI/Kiwi2Shop.ProductsAPI.csproj" />
+  <Project Path="Kiwi2Shop.reverseProxy/Kiwi2Shop.reverseProxy.csproj" />
   <Project Path="Kiwi2Shop.ServiceDefaults/Kiwi2Shop.ServiceDefaults.csproj" Id="1cd976db-bbd5-4f45-a313-3612ae53c63e" />
+  <Project Path="Kiwi2Shop.Shared/Kiwi2Shop.Shared.csproj" Id="b879e5e3-0a84-46ee-b78a-f7621db5fed4" />
   <Project Path="Kiwi2Shop/Kiwi2Shop.csproj" />
 </Solution>

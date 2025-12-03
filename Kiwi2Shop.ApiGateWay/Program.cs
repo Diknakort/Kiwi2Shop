@@ -1,27 +1,45 @@
+using Kiwi2Shop.GateWay.Extensions;
+using System.Threading.RateLimiting;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
+// Agregar Rate Limiting
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1)
+            }));
 
-// Add services to the container.
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsync(
+            "Demasiadas solicitudes. Por favor, intenta más tarde.",
+            token);
+    };
+});
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Agregar YARP
+builder.Services.AddYarpReverseProxy(builder.Configuration);
+;
 
+// Configurar CORS
+builder.Services.AddGatewayCors();
+builder.Services.AddHealthChecks();
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
+// Middleware personalizado
+app.MapHealthChecks("/health");
+app.UseCors();
+app.UseRateLimiter();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+// Usar YARP
+app.MapReverseProxy();
 
 app.Run();

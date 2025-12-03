@@ -4,21 +4,33 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>2868b0bd-6b3d-451f-a411-35275e802eec</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.5.2" />
+	  <PackageReference Include="Aspire.Hosting.AppHost" />
+	  <PackageReference Include="Aspire.Hosting.NodeJs" />
+	  <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+	  <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+	  <PackageReference Include="Aspire.Hosting.Redis" />
+
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kiwi2Shop.ApiGateWay\Kiwi2Shop.ApiGateWay.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.ApiGateWay\Kiwi2Shop.GateWay.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.Frontend\kiwi2shop.frontend.esproj" />
     <ProjectReference Include="..\Kiwi2Shop.identity\Kiwi2Shop.Identity.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.Notifications\Kiwi2Shop.Notifications.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.OrdersAPI\Kiwi2Shop.OrdersAPI.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.ProductsAPI\Kiwi2Shop.ProductsAPI.csproj" />
+    <ProjectReference Include="..\Kiwi2Shop.reverseProxy\Kiwi2Shop.reverseProxy.csproj" />
+	  <ProjectReference Include="..\Kiwi2Shop.Shared\Kiwi2Shop.Shared.csproj" />
+	  <ProjectReference Include="..\Kiwi2Shop.ServiceDefaults\Kiwi2Shop.ServiceDefaults.csproj" />
+
+	  
   </ItemGroup>
 
 </Project>

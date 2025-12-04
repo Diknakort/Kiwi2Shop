@@ -1,7 +1,5 @@
-﻿using Kiwi2Shop.identity.Models;
-using Kiwi2Shop.Identity.Models;
+﻿using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -232,19 +230,4 @@ public class AuthController : ControllerBase
             Message = "Contraseña cambiada exitosamente"
         });
     }
-    //public class AuthResponse
-    //{
-    //    public bool Success { get; set; }
-    //    public string Message { get; set; } = string.Empty;
-    //    public identity.Models.UserInfo? User { get; set; }
-    //    public List<string> Roles { get; set; } = new(); // NUEVO
-    //    public List<string> Errors { get; set; } = new();
-    //}
-
-    //public class UserInfo
-    //{
-    //    public string Id { get; set; } = string.Empty;
-    //    public string Email { get; set; } = string.Empty;
-    //    public string? UserName { get; set; }
-    //}
 }

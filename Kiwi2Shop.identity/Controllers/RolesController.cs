@@ -1,11 +1,8 @@
-﻿using Kiwi2Shop.identity.Models;
-using Kiwi2Shop.Identity.Models;
+﻿using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
 
 namespace Kiwi2Shop.identity.Controllers
 {

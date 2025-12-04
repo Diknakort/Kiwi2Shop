@@ -30,8 +30,13 @@
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Kiwi2Shop.ServiceDefaults\Kiwi2Shop.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Kiwi2Shop.Shared\Kiwi2Shop.Shared.csproj" />
+	</ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Kiwi2Shop.ServiceDefaults\Kiwi2Shop.ServiceDefaults.csproj" />
+    <Folder Include="Dto\" />
   </ItemGroup>
 
 </Project>

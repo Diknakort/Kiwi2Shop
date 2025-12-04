@@ -9,7 +9,7 @@ var maildev = builder
 // 1. Agregar el servidor PostgreSQL (usará la imagen oficial de Docker)
 var postgres = builder.AddPostgres("postgres")
     .WithPgAdmin() // Habilita pgAdmin
-    .WithLifetime(ContainerLifetime.Persistent) 
+    .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume("postgres");
 
 var identityDb = postgres.AddDatabase("identitydb");

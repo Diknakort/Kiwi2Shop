@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Kiwi2Shop.OrdersAPI.Models;
+using Kiwi2Shop.sAPI.Models;
 
 
-namespace Kiwi2Shop.OrdersAPI.Controllers
+namespace Kiwi2Shop.ProductsAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -16,7 +16,7 @@ namespace Kiwi2Shop.OrdersAPI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll() =>
-            Ok(await _context.Orders.Include(o => o.Items).ToListAsync());
+            Ok(await _context.Orders.Include(o => o.OrderItems).ToListAsync());
 
         [HttpPost]
         public async Task<IActionResult> Create(Order order)

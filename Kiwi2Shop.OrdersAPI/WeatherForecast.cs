@@ -1,4 +1,4 @@
-namespace Kiwi2Shop.OrdersAPI;
+namespace Kiwi2Shop.ProductsAPI;
 
 public class WeatherForecast
 {

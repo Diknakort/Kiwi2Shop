@@ -1,10 +1,8 @@
-﻿using Kiwi2Shop.identity.Models;
-using Kiwi2Shop.Identity.Models;
+﻿using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Kiwi2Shop.Identity.Controllers
 {
@@ -128,4 +126,4 @@ namespace Kiwi2Shop.Identity.Controllers
 //         });
 //     }
 // }
-    
+

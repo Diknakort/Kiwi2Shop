@@ -36,4 +36,8 @@
     <ProjectReference Include="..\Kiwi2Shop.Shared\Kiwi2Shop.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

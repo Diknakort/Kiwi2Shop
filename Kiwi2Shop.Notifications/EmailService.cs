@@ -1,7 +1,4 @@
 ﻿using MailKit.Net.Smtp;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kiwi2Shop.Notifications
 {
@@ -18,8 +15,8 @@ namespace Kiwi2Shop.Notifications
             _client = new SmtpClient();
             // Initialize SMTP client with configuration settings if needed
             _client.Connect(
-                _configuration["Smtp:Host"], 
-                int.Parse(_configuration["Smtp:Port"]), 
+                _configuration["Smtp:Host"],
+                int.Parse(_configuration["Smtp:Port"]),
                 false);//use SSL
         }
 
@@ -39,7 +36,7 @@ namespace Kiwi2Shop.Notifications
                 await _client.SendAsync(message);
                 _logger.LogInformation("Wellcome email sent to {Email}", to);
             }
-         
+
             //// Simulate sending an email
             //Console.WriteLine($"Sending Email to: {to}");
             //Console.WriteLine($"Subject: {subject}");

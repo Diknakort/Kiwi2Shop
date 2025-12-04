@@ -1,5 +1,3 @@
-using Yarp.ReverseProxy;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Cargar configuración de ReverseProxy desde appsettings.json

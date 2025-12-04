@@ -1,6 +1,4 @@
-﻿using Kiwi2Shop.identity.Models;
-
-namespace Kiwi2Shop.Identity.Models
+﻿namespace Kiwi2Shop.Identity.Models
 {
     public class AuthResponse
     {

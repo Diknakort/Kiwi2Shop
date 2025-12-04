@@ -1,11 +1,4 @@
-﻿using Kiwi2Shop.Identity.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.IO;
-
-namespace Kiwi2Shop.Identity.Models
+﻿namespace Kiwi2Shop.Identity.Models
 {
     public class RoleResponse
     {

@@ -1,5 +1,8 @@
+using Kiwi2Shop.ProductsAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+
 using Scalar.AspNetCore;
 
 
@@ -17,11 +20,20 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
+builder.Services.AddHttpClient<IProductService, ProductService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ProductsApi:BaseUrl"]);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+builder.Services.AddScoped<OrderService>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
 
 builder.Services.AddDbContext<OrdersDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("OrdersDb")));

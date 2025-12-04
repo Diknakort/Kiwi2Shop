@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace GranadaShopClase.API.Identity.Services
+﻿namespace GranadaShopClase.API.Identity.Services
 {
     public interface IAuthService
     {

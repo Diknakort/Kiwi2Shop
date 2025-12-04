@@ -1,6 +1,5 @@
 using Kiwi2Shop.Notifications;
 using MassTransit;
-using System;
 
 var builder = Host.CreateApplicationBuilder(args);
 

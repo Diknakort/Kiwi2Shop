@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-// ProductsApi/Data/ProductsDbContext.cs
-using Microsoft.EntityFrameworkCore;
-using System;
-using Microsoft.EntityFrameworkCore;
+﻿// ProductsApi/Data/ProductsDbContext.cs
 using Kiwi2Shop.ProductsAPI.Models;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Kiwi2Shop.ProductsAPI.Data

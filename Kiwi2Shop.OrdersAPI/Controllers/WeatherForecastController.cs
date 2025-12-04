@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kiwi2Shop.OrdersAPI.Controllers;
+namespace Kiwi2Shop.ProductsAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]

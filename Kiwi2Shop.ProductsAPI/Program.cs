@@ -1,11 +1,7 @@
-using Asp.Versioning;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Kiwi2Shop.ProductsAPI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using System.Text;
-using Kiwi2Shop.ProductsAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

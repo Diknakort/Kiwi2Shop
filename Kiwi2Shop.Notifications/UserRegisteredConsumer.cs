@@ -1,7 +1,6 @@
 using Kiwi2Shop.Notifications;
 using Kiwi2Shop.Shared.Events;
 using MassTransit;
-using Microsoft.AspNetCore.Identity.UI.Services;
 
 
 internal class UserRegisteredConsumer : IConsumer<UserCreatedEvent>

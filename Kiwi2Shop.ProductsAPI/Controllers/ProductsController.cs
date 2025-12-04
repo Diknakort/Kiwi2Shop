@@ -1,12 +1,8 @@
 ﻿using Kiwi2Shop.ProductsAPI.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Kiwi2Shop.ProductsAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Kiwi2Shop.ProductsAPI.Models;
-using System.Threading.Tasks;
 
 namespace Kiwi2Shop.ProductsAPI.Controllers
 {

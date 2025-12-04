@@ -1,6 +1,5 @@
-﻿using Kiwi2Shop.OrdersAPI.Models;
+﻿using Kiwi2Shop.sAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 public class OrdersDbContext : DbContext
 {

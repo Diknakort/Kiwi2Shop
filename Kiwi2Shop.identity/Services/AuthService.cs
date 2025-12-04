@@ -1,6 +1,5 @@
 ﻿using GranadaShopClase.API.Identity.Dto.Auth;
 using GranadaShopClase.API.Identity.Services;
-using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,13 +16,13 @@ namespace Kiwi2Shop.API.Identity.Services
         {
             _userManager = userManager;
             _roleManager = roleManager;
-           
+
         }
 
         public async Task<ResponseLogin> Login(string username, string password, string token)
-            {
+        {
 
-            
+
             var roles = await _userManager.GetRolesAsync(await _userManager.FindByNameAsync(username));
             var claims = new List<Claim>
             {
@@ -32,7 +31,7 @@ namespace Kiwi2Shop.API.Identity.Services
                 //new Claim(ClaimTypes.Email, username.Email!),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "NoRole"),
 
-                
+
             };
             // JWT token configuration
             var secretKey = _configuration["Jwt:SecretKey"];
@@ -70,10 +69,10 @@ namespace Kiwi2Shop.API.Identity.Services
             // claims , expiration, etc.
 
 
-      
+
 
             var user = await _userManager.FindByEmailAsync(username);
-            
+
             if (user == null)
             {
                 return null;

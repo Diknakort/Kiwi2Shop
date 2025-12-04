@@ -1,6 +1,5 @@
 using Asp.Versioning;
 using Kiwi2Shop.identity.Data;
-using Kiwi2Shop.identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

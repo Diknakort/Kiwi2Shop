@@ -40,6 +40,8 @@ namespace Kiwi2Shop.API.Identity.Services
             var expirationMinutes = int.Parse(_configuration["Jwt:ExpirationMinutes"]!);
 
             var key = System.Text.Encoding.ASCII.GetBytes(secretKey!);
+
+            //var creds = Environment.GetEnvironmentVariable("JWT_KEY");
             var creds = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key);
 
             var authToken = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(

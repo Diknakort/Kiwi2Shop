@@ -1,113 +1,86 @@
-﻿using GranadaShopClase.API.Identity.Dto.Auth;
-using GranadaShopClase.API.Identity.Services;
+﻿using Kiwi2Shop.identity.Dto.Auth;
+using Kiwi2Shop.identity.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
-namespace Kiwi2Shop.API.Identity.Services
+namespace Kiwi2Shop.identity.Services
 {
     public class AuthService : IAuthService
     {
-        private UserManager<IdentityUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-
+            _configuration = configuration;
         }
 
-        public async Task<ResponseLogin> Login(string username, string password, string token)
+        public async Task<ResponseLogin?> Login(string username, string password)
         {
-
-
-            var roles = await _userManager.GetRolesAsync(await _userManager.FindByNameAsync(username));
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, username),
-                //new Claim(ClaimTypes.NameIdentifier, useusernamer.id),
-                //new Claim(ClaimTypes.Email, username.Email!),
-                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "NoRole"),
-
-
-            };
-            // JWT token configuration
-            var secretKey = _configuration["Jwt:SecretKey"];
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
-            var expirationMinutes = int.Parse(_configuration["Jwt:ExpirationMinutes"]!);
-
-            var key = System.Text.Encoding.ASCII.GetBytes(secretKey!);
-
-            //var creds = Environment.GetEnvironmentVariable("JWT_KEY");
-            var creds = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key);
-
-            var authToken = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
-                signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(creds, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
-            );
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, username)
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(expirationMinutes),
-                Issuer = issuer,
-                Audience = audience,
-                SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(creds, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
-            };
-            var tokenObj = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(tokenObj);
-
-            var encryptedToken = new JwtSecurityTokenHandler().WriteToken(authToken); // Aquí puedes agregar lógica para encriptar el token si es necesario
-
-            // claims , expiration, etc.
-
-
-
-
             var user = await _userManager.FindByEmailAsync(username);
 
             if (user == null)
-            {
                 return null;
-            }
+
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
             if (!isPasswordValid)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName ?? username),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
+            };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            // Read JWT configuration (support both "JWT" and "Jwt" keys)
+            var issuer = _configuration["JWT:Issuer"] ?? _configuration["Jwt:Issuer"];
+            var audience = _configuration["JWT:Audience"] ?? _configuration["Jwt:Audience"];
+            var secretKey = _configuration["JWT:SecretKey"] ?? _configuration["Jwt:SecretKey"];
+            var expirationValue = _configuration["JWT:ExpirationMinutes"] ?? _configuration["Jwt:ExpirationMinutes"] ?? _configuration["Logging:JWT:ExpireMinutes"] ?? _configuration["Logging:JWT:ExpirationMinutes"];
+            if (!int.TryParse(expirationValue, out var expirationMinutes)) expirationMinutes = 60;
+
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                // No secret key configured
                 return null;
             }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(expirationMinutes),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenObj = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(tokenObj);
 
             return new ResponseLogin
             {
                 Token = tokenString,
                 Expiration = tokenObj.ValidTo
             };
-
         }
-        //public async Task<IdentityUser> Login(string username, string password)
-        //{
-        //    var user = await _userManager.FindByEmailAsync(username);
-
-        //    if (user == null)
-        //    {
-        //        return null;
-        //    }
-        //    var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
-        //    if (!isPasswordValid)
-        //    {
-        //        return null;
-        //    }
-        //    return user;
-
-        //}
 
         public async Task<bool> Register(string username, string password)
         {

@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using Kiwi2Shop.identity.Data;
+using Kiwi2Shop.identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ builder.Services.AddOpenApi();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
+
 
 
 // Configurar cookies para autenticación
@@ -108,6 +110,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+// Register AuthService implementation
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configurar CORS para React
 builder.Services.AddCors(options =>

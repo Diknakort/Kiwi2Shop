@@ -6,6 +6,10 @@
         public string Message { get; set; } = string.Empty;
         public identity.Models.UserInfo? User { get; set; }
         public List<string> Errors { get; set; } = new();
+
+        // JWT token and expiration (optional)
+        public string? Token { get; set; }
+        public DateTime? Expiration { get; set; }
     }
     public class UserInfo
     {

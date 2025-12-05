@@ -1,4 +1,6 @@
 ﻿using Kiwi2Shop.Identity.Models;
+using Kiwi2Shop.identity.Services;
+using Kiwi2Shop.identity.Dto.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +14,18 @@ public class AuthController : ControllerBase
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly ILogger<AuthController> _logger;
+    private readonly IAuthService _authService;
 
     public AuthController(
         UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager,
-        ILogger<AuthController> logger)
+        ILogger<AuthController> logger,
+        IAuthService authService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = logger;
+        _authService = authService;
     }
 
     /// <summary>
@@ -64,6 +69,9 @@ public class AuthController : ControllerBase
         // Iniciar sesión automáticamente
         await _signInManager.SignInAsync(user, isPersistent: false);
 
+        // Optionally create token on register by calling auth service
+        var loginResp = await _authService.Login(request.Email, request.Password);
+
         return base.Ok(new AuthResponse
         {
             Success = true,
@@ -73,7 +81,9 @@ public class AuthController : ControllerBase
                 Id = user.Id,
                 Email = user.Email!,
                 UserName = user.UserName
-            }
+            },
+            Token = loginResp?.Token,
+            Expiration = loginResp?.Expiration
         });
     }
 
@@ -117,6 +127,9 @@ public class AuthController : ControllerBase
 
         _logger.LogInformation("Usuario inició sesión: {Email}", request.Email);
 
+        // Generate JWT using service
+        var tokenResponse = await _authService.Login(request.Email, request.Password);
+
         return base.Ok(new AuthResponse
         {
             Success = true,
@@ -126,7 +139,9 @@ public class AuthController : ControllerBase
                 Id = user.Id,
                 Email = user.Email!,
                 UserName = user.UserName
-            }
+            },
+            Token = tokenResponse?.Token,
+            Expiration = tokenResponse?.Expiration
         });
     }
 

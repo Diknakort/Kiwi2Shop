@@ -1,4 +1,4 @@
-﻿namespace GranadaShopClase.API.Identity.Dto.Auth
+﻿namespace Kiwi2Shop.identity.Dto.Auth
 {
     public class ResponseLogin
     {

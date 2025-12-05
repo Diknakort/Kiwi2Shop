@@ -12,6 +12,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.AddNpgsqlDbContext<ProductsDbContext>("ProductsDb");
 
 var app = builder.Build();
 
@@ -21,10 +22,11 @@ app.MapDefaultEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ProductsDbContext>();
+    await context.Database.MigrateAsync();
 }
 
-builder.Services.AddDbContext<ProductsDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ProductsDb")));
 
 app.UseHttpsRedirection();
 

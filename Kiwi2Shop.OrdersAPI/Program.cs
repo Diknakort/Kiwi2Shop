@@ -16,9 +16,9 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
+builder.AddNpgsqlDbContext<OrdersDbContext>("OrdersDb");
 
-app.MapDefaultEndpoints();
+
 
 builder.Services.AddHttpClient<IProductService, ProductService>(client =>
 {
@@ -28,15 +28,22 @@ builder.Services.AddHttpClient<IProductService, ProductService>(client =>
 
 builder.Services.AddScoped<OrderService>();
 
+var app = builder.Build();
+
+app.MapDefaultEndpoints();
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
+    await context.Database.MigrateAsync();
 }
 
 
-builder.Services.AddDbContext<OrdersDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("OrdersDb")));
+
 
 app.UseHttpsRedirection();
 

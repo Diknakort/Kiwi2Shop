@@ -14,6 +14,21 @@ var postgres = builder.AddPostgres("postgres")
 
 var identityDb = postgres.AddDatabase("identitydb");
 
+// 1. Agregar el servidor PostgreSQL (usará la imagen oficial de Docker)
+var postgresOrders = builder.AddPostgres("PostgresOrdersDb")
+    .WithPgAdmin() // Habilita pgAdmin
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume("PostgresOrdersDb");
+
+var ordersDb = postgresOrders.AddDatabase("OrdersDb");
+
+// 1. Agregar el servidor PostgreSQL (usará la imagen oficial de Docker)
+var postgresProducts = builder.AddPostgres("PostgresProductsDb")
+    .WithPgAdmin() // Habilita pgAdmin
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume("PostgresProductsDb");
+var productsDb = postgresProducts.AddDatabase("ProductsDb");
+
 // 2. Agregar RabbitMQ con el plugin de gestión habilitado (usará la imagen oficial de Docker) necesita el using Aspire.Hosting.RabbitMQ; para mensajeria
 var rabbit = builder
     .AddRabbitMQ("rabbitmq")
@@ -42,18 +57,14 @@ var gatewayApi = builder.AddProject<Projects.Kiwi2Shop_GateWay>("gateway-api")
     .WithReference(redis);
 
 //añadir referencia al servicio ORDERS y a PRODUCTS cuando existan
-var productsDb = postgres.AddDatabase("ProductsDb");
 
 var productsApi = builder.AddProject<Projects.Kiwi2Shop_ProductsAPI>("kiwi2shop-productsapi")
+    .WaitFor(productsDb)
     .WithReference(productsDb);
 
-
-var ordersDb = postgres.AddDatabase("OrdersDb");
-
-
 var ordersApi = builder.AddProject<Projects.Kiwi2Shop_OrdersAPI>("kiwi2shop-ordersapi")
-    .WithReference(ordersDb);
-
+      .WaitFor(ordersDb)
+      .WithReference(ordersDb);
 
 // ============================================
 // FRONTEND - React App
@@ -72,14 +83,5 @@ builder.AddProject<Projects.Kiwi2Shop_reverseProxy>("kiwi2shop-reverseproxy");
 builder.AddProject<Projects.Kiwi2Shop_Notifications>("kiwi2shop-notifications")
     .WaitFor(rabbit)
     .WithReference(rabbit);
-
-
-builder.AddProject<Projects.Kiwi2Shop_ProductsAPI>("kiwi2shop-productsapi")
-    .WithReference(productsApi);
-
-
-builder.AddProject<Projects.Kiwi2Shop_OrdersAPI>("kiwi2shop-ordersapi")
-    .WithReference(ordersApi);
-
 
 builder.Build().Run();

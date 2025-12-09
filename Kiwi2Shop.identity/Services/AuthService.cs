@@ -15,7 +15,7 @@ namespace Kiwi2Shop.identity.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        private readonly IPublishEndpoint? _publishEndpoint;
+        private readonly IPublishEndpoint? _publishEndpoint; 
 
         public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IPublishEndpoint? publishEndpoint = null)
         {

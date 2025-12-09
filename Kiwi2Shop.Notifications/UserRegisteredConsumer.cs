@@ -3,15 +3,16 @@ using Kiwi2Shop.Shared.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
+namespace UserRegisteredConsumer;
 
-public class UserRegisteredConsumer : IConsumer<UserCreatedEvent>
+public class UserRegisteredConsumerClass : IConsumer<UserCreatedEvent>
 {
 
-    private ILogger<UserRegisteredConsumer> _logger;
+    private ILogger<UserRegisteredConsumerClass> _logger;
     private IEmailService _emailService;
 
 
-    public UserRegisteredConsumer(ILogger<UserRegisteredConsumer> logger, IEmailService emailService)
+    public UserRegisteredConsumerClass(ILogger<UserRegisteredConsumerClass> logger, IEmailService emailService)
     {
         _logger = logger;
         _emailService = emailService;

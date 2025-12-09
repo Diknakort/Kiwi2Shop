@@ -11,7 +11,8 @@ using System.Text.Json;
 using Kiwi2Shop.ProductsAPI.Services;
 using Kiwi2Shop.Shared.Dto;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert; // Asegúrate de que esta directiva esté presente
+using Assert = NUnit.Framework.Assert;
+using UserRegisteredConsumer; // Asegúrate de que esta directiva esté presente
 
 namespace Kiwi2Shop.Test.Unit
 {
@@ -27,9 +28,9 @@ namespace Kiwi2Shop.Test.Unit
                 .Setup(m => m.SendWellcomeEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
-            var mockLogger = new Mock<ILogger<UserRegisteredConsumer>>();
+            var mockLogger = new Mock<ILogger<UserRegisteredConsumerClass>>();
 
-            var consumer = new UserRegisteredConsumer(mockLogger.Object, mockEmail.Object);
+            var consumer = new UserRegisteredConsumerClass(mockLogger.Object, mockEmail.Object);
 
             var userEvent = new UserCreatedEvent("user-123", "user@example.com");
 

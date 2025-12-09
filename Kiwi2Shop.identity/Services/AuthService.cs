@@ -62,9 +62,11 @@ namespace Kiwi2Shop.identity.Services
                 // No secret key configured
                 return null;
             }
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = Environment.GetEnvironmentVariable("JWT:SecretKey") ??
+                throw new ApplicationException("JWT key is not configured.");
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            //var Securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

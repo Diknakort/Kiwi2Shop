@@ -1,5 +1,6 @@
 using Kiwi2Shop.Notifications;
 using MassTransit;
+using UserRegisteredConsumer;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddMassTransit(x =>
 {
     // Register consumers
-    x.AddConsumer<UserRegisteredConsumer>();
+    x.AddConsumer<UserRegisteredConsumerClass>();
 
     x.UsingRabbitMq((context, cfg) =>
     {

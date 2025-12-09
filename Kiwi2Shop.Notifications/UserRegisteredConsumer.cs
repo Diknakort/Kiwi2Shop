@@ -1,9 +1,10 @@
 using Kiwi2Shop.Notifications;
 using Kiwi2Shop.Shared.Events;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 
-internal class UserRegisteredConsumer : IConsumer<UserCreatedEvent>
+public class UserRegisteredConsumer : IConsumer<UserCreatedEvent>
 {
 
     private ILogger<UserRegisteredConsumer> _logger;

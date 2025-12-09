@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MassTransit;
+using Kiwi2Shop.Shared.Events;
 
 namespace Kiwi2Shop.identity.Services
 {
@@ -13,12 +15,14 @@ namespace Kiwi2Shop.identity.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IPublishEndpoint? _publishEndpoint;
 
-        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IPublishEndpoint? publishEndpoint = null)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<ResponseLogin?> Login(string username, string password)
@@ -78,7 +82,8 @@ namespace Kiwi2Shop.identity.Services
             return new ResponseLogin
             {
                 Token = tokenString,
-                Expiration = tokenObj.ValidTo
+                // Use the descriptor's Expires value to preserve sub-second precision
+                Expiration = tokenDescriptor.Expires ?? tokenObj.ValidTo
             };
         }
 
@@ -89,7 +94,20 @@ namespace Kiwi2Shop.identity.Services
                 UserName = username.Split("@")[0],
                 Email = username
             }, password);
-            return result.Succeeded;
+
+            if (!result.Succeeded)
+                return false;
+
+            // Try to find the created user and publish an event
+            var createdUser = await _userManager.FindByEmailAsync(username);
+            if (createdUser != null && _publishEndpoint != null)
+            {
+                var userCreatedEvent = new UserCreatedEvent(createdUser.Id, createdUser.Email!);
+
+                await _publishEndpoint.Publish(userCreatedEvent);
+            }
+
+            return true;
         }
     }
 }

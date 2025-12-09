@@ -1,17 +1,24 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Microsoft.Extensions.Logging;
 using MassTransit;
 using Kiwi2Shop.Notifications;
 using Kiwi2Shop.Shared.Events;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using Kiwi2Shop.ProductsAPI.Services;
+using Kiwi2Shop.Shared.Dto;
+using NUnit.Framework;
+using Assert = NUnit.Framework.Assert; // Asegúrate de que esta directiva esté presente
 
 namespace Kiwi2Shop.Test.Unit
 {
-    [TestClass]
+    [TestFixture]
     public sealed class UserRegisteredConsumerTests
     {
-        [TestMethod]
+        [Test]
         public async Task Consume_CallsSendWellcomeEmail_WithExpectedArguments()
         {
             // Arrange

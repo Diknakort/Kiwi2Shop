@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.InMemory;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Kiwi2Shop.ProductsAPI.Services;
 using Kiwi2Shop.Shared.Dto;
 

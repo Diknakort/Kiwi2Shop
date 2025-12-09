@@ -2,13 +2,14 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Kiwi2Shop.ProductsAPI.Services;
 using Kiwi2Shop.Shared.Dto;
+using NUnit.Framework;
+using Assert = NUnit.Framework.Assert; // Asegúrate de que esta directiva esté presente
 
 namespace Kiwi2Shop.Test.Unit
 {
-    [TestClass]
+    [TestFixture]
     public sealed class ProductServiceTests
     {
         // Handler sencillo para simular respuestas HTTP
@@ -20,17 +21,17 @@ namespace Kiwi2Shop.Test.Unit
                 => Task.FromResult(_responder(request));
         }
 
-        [TestMethod]
+        [Test]
         public async Task GetProductByIdAsync_ReturnsProduct_WhenSuccess()
         {
             var id = Guid.NewGuid();
-            var expected = new ProductDto { Id = id, Name = "TestProduct", Price = 9.99m };
+            var expectedProduct = new ProductDto { Id = id, Name = "TestProduct", Price = 9.99m };
 
             var handler = new FakeHandler(req =>
             {
                 if (req.Method == HttpMethod.Get && req.RequestUri!.AbsolutePath.EndsWith($"/api/products/{id}"))
                 {
-                    var json = JsonSerializer.Serialize(expected);
+                    var json = JsonSerializer.Serialize(expectedProduct);
                     return new HttpResponseMessage(HttpStatusCode.OK)
                     {
                         Content = new StringContent(json, Encoding.UTF8, "application/json")
@@ -42,15 +43,16 @@ namespace Kiwi2Shop.Test.Unit
             var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/") };
             var service = new ProductService(client);
 
-            var actual = await service.GetProductByIdAsync(id);
+            var actualProduct = await service.GetProductByIdAsync(id);
 
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.Id, actual!.Id);
-            Assert.AreEqual(expected.Name, actual.Name);
-            Assert.AreEqual(expected.Price, actual.Price);
-        }
+            Assert.That(actualProduct, Is.Not.Null);
+            Assert.That(actualProduct!.Id, Is.EqualTo(expectedProduct.Id), "El Id no coincide.");
+            Assert.That(actualProduct.Name, Is.EqualTo(expectedProduct.Name), "El Nombre no coincide.");
+            // Utiliza una tolerancia para decimales si es necesario, aunque aquí Is.EqualTo es seguro.
+            Assert.That(actualProduct.Price, Is.EqualTo(expectedProduct.Price), "El Precio no coincide.");
+         }
 
-        [TestMethod]
+        [Test]
         public async Task GetProductsByIdsAsync_ReturnsList_WhenSuccess()
         {
             var ids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
@@ -78,8 +80,10 @@ namespace Kiwi2Shop.Test.Unit
 
             var actual = await service.GetProductsByIdsAsync(ids);
 
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(2, actual.Count);
+            //Assert.IsNotNull(actual);
+            //Assert.AreEqual(2, actual.Count);
+            Assert.That(actual, Is.Not.Null);
+            Assert.That(actual!.Count, Is.EqualTo(expected.Count), "Count...");
             CollectionAssert.AreEqual(expected.Select(p => p.Id).ToList(), actual.Select(p => p.Id).ToList());
         }
     }

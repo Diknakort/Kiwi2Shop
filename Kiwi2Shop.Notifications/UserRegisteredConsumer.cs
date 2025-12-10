@@ -8,7 +8,7 @@ namespace UserRegisteredConsumer;
 public class UserRegisteredConsumerClass : IConsumer<UserCreatedEvent>
 {
 
-    private ILogger<UserRegisteredConsumerClass> _logger;
+    private readonly ILogger<UserRegisteredConsumerClass> _logger;
     private IEmailService _emailService;
 
 

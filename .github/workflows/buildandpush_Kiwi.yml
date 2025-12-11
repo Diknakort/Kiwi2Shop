@@ -17,6 +17,7 @@ on:
       - 'Kiwi2Shop.ServiceDefaults/**'
       - 'Kiwi2Shop.Shared/**'
       - 'Kiwi2Shop/**'
+      - '.github/workflows/**'
   pull_request:
     branches:
       - master

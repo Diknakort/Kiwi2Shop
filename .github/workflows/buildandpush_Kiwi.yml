@@ -7,21 +7,37 @@ on:
       - main
     paths:
       - 'Kiwi2Shop.identity/**'
+      - 'Kiwi2Shop.Frontend/**'
+      - 'Kiwi2Shop.GateWay/**'
+      - 'Kiwi2Shop.Notifications/**'
+      - 'Kiwi2Shop.OrdersAPI/**'
+      - 'Kiwi2Shop.ProductsAPI/**'
+      - 'Kiwi2Shop.reverseProxy/**'
+      - 'Kiwi2Shop.Test.Unit/**'
       - 'Kiwi2Shop.ServiceDefaults/**'
       - 'Kiwi2Shop.Shared/**'
+      - 'Kiwi2Shop/**'
   pull_request:
     branches:
       - master
       - main
     paths:
       - 'Kiwi2Shop.identity/**'
+      - 'Kiwi2Shop.Frontend/**'
+      - 'Kiwi2Shop.GateWay/**'
+      - 'Kiwi2Shop.Notifications/**'
+      - 'Kiwi2Shop.OrdersAPI/**'
+      - 'Kiwi2Shop.ProductsAPI/**'
+      - 'Kiwi2Shop.reverseProxy/**'
+      - 'Kiwi2Shop.Test.Unit/**'
       - 'Kiwi2Shop.ServiceDefaults/**'
       - 'Kiwi2Shop.Shared/**'
+      - 'Kiwi2Shop/**'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/orderflow-identity-api
+  IMAGE_NAME: ${{ github.repository_owner }}/Kiwi2Shop.identity
 
 jobs:
   build:

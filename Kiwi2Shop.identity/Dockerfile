@@ -12,7 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Packages.props", "."]
 COPY ["Kiwi2Shop.identity/Kiwi2Shop.identity.csproj", "Kiwi2Shop.identity/"]
+COPY ["Kiwi2Shop.ServiceDefaults/Kiwi2Shop.ServiceDefaults.csproj", "Kiwi2Shop.ServiceDefaults/"]
+COPY ["Kiwi2Shop.Shared/Kiwi2Shop.Shared.csproj", "Kiwi2Shop.Shared/"]
 RUN dotnet restore "./Kiwi2Shop.identity/Kiwi2Shop.identity.csproj"
 COPY . .
 WORKDIR "/src/Kiwi2Shop.identity"

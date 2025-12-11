@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Kiwi2Shop.ApiGateWay\Kiwi2Shop.GateWay.csproj" />
-    <ProjectReference Include="..\Kiwi2Shop.Frontend\kiwi2shop.frontend.esproj" />
+    <ProjectReference Include="..\Kiwi2Shop.Frontend\kiwi2shop.Frontend.esproj" />
     <ProjectReference Include="..\Kiwi2Shop.identity\Kiwi2Shop.Identity.csproj" />
     <ProjectReference Include="..\Kiwi2Shop.Notifications\Kiwi2Shop.Notifications.csproj" />
     <ProjectReference Include="..\Kiwi2Shop.OrdersAPI\Kiwi2Shop.OrdersAPI.csproj" />

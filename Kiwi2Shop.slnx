@@ -3,7 +3,7 @@
     <File Path="Directory.Packages.props" />
   </Folder>
   <Project Path="Kiwi2Shop.ApiGateWay/Kiwi2Shop.GateWay.csproj" />
-  <Project Path="Kiwi2Shop.Frontend/kiwi2shop.frontend.esproj">
+  <Project Path="Kiwi2Shop.Frontend/kiwi2shop.frontend.esproj" DisplayName="kiwi2shop.Frontend">
     <Build />
     <Deploy />
   </Project>

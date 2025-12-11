@@ -1,0 +1,45 @@
+name: Build and Publish NuGet Packages
+
+on:
+  push:
+    branches: [ main, master ]
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test Kiwi2Shop.Test.Unit/Kiwi2Shop.Test.Unit.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Pack Shared library
+        run: dotnet pack Kiwi2Shop.Shared/Kiwi2Shop.Shared.csproj --configuration Release --no-build --output ./packages
+
+      - name: Pack ServiceDefaults
+        run: dotnet pack Kiwi2Shop.ServiceDefaults/Kiwi2Shop.ServiceDefaults.csproj --configuration Release --no-build --output ./packages
+
+      - name: Publish to GitHub Packages
+        run: dotnet nuget push "./packages/*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+        env:
+          DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER: 0

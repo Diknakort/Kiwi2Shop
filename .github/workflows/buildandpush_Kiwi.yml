@@ -37,7 +37,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/Kiwi2Shop.identity
+  IMAGE_NAME: ${{ github.repository_owner }}/kiwi2Shop.identity
 
 jobs:
   build:
@@ -57,7 +57,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Kiwi2Shop.identity/Dockerfile
+          file: ./kiwi2Shop.identity/Dockerfile
           push: false
           load: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test

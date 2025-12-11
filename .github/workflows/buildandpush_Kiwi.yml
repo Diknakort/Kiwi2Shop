@@ -59,7 +59,7 @@ jobs:
           file: ./Kiwi2Shop.identity/Dockerfile
           push: true
           load: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           

@@ -38,7 +38,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/kiwi2shop.identity
+  IMAGE_NAME: diknakort/kiwi2shop.identity
 
 jobs:
   build:

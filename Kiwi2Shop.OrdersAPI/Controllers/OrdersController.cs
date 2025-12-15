@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Asp.Versioning;
+using Kiwi2Shop.sAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Kiwi2Shop.sAPI.Models;
 
 
 namespace Kiwi2Shop.ProductsAPI.Controllers
 {
+    [ApiVersion(1)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+
     public class OrdersController : ControllerBase
     {
         private readonly OrdersDbContext _context;

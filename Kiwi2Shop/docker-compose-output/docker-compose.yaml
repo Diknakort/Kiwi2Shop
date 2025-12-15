@@ -1,0 +1,276 @@
+services:
+  orderflowclase-dashboard:
+    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
+    expose:
+      - "18888"
+      - "18889"
+    networks:
+      - "aspire"
+    restart: "always"
+  maildev:
+    image: "maildev/maildev:latest"
+    expose:
+      - "1080"
+      - "1025"
+    networks:
+      - "aspire"
+  postgres:
+    image: "docker.io/library/postgres:17.6"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/postgresql/data"
+        source: "postgres"
+        read_only: false
+    networks:
+      - "aspire"
+  postgresordersdb:
+    image: "docker.io/library/postgres:17.6"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRESORDERSDB_PASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/postgresql/data"
+        source: "PostgresOrdersDb"
+        read_only: false
+    networks:
+      - "aspire"
+  postgresproductsdb:
+    image: "docker.io/library/postgres:17.6"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRESPRODUCTSDB_PASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/postgresql/data"
+        source: "PostgresProductsDb"
+        read_only: false
+    networks:
+      - "aspire"
+  rabbitmq:
+    image: "docker.io/library/rabbitmq:4.2-management"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"
+    expose:
+      - "5672"
+      - "15672"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/rabbitmq"
+        source: "rabbitmq-data"
+        read_only: false
+    networks:
+      - "aspire"
+  redis:
+    image: "docker.io/library/redis:8.2"
+    command:
+      - "-c"
+      - "redis-server --requirepass $$REDIS_PASSWORD --save 60 1"
+    entrypoint:
+      - "/bin/sh"
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    expose:
+      - "6379"
+    volumes:
+      - type: "volume"
+        target: "/data"
+        source: "redis-data-identity"
+        read_only: false
+    networks:
+      - "aspire"
+  identity-api:
+    image: "${IDENTITY_API_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${IDENTITY_API_PORT}"
+      ConnectionStrings__rabbitmq: "amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672"
+      RABBITMQ_HOST: "rabbitmq"
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: "guest"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
+      RABBITMQ_URI: "amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672"
+      ConnectionStrings__identitydb: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=identitydb"
+      IDENTITYDB_HOST: "postgres"
+      IDENTITYDB_PORT: "5432"
+      IDENTITYDB_USERNAME: "postgres"
+      IDENTITYDB_PASSWORD: "${POSTGRES_PASSWORD}"
+      IDENTITYDB_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/identitydb"
+      IDENTITYDB_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/identitydb"
+      IDENTITYDB_DATABASE: "identitydb"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "identity-api"
+    expose:
+      - "${IDENTITY_API_PORT}"
+    depends_on:
+      postgres:
+        condition: "service_started"
+      rabbitmq:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  gateway-api:
+    image: "${GATEWAY_API_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${GATEWAY_API_PORT}"
+      IDENTITY-API_HTTP: "http://identity-api:${IDENTITY_API_PORT}"
+      services__identity-api__http__0: "http://identity-api:${IDENTITY_API_PORT}"
+      IDENTITY-API_HTTPS: "https://identity-api:${IDENTITY_API_PORT}"
+      ConnectionStrings__redis: "redis:6379,password=${REDIS_PASSWORD}"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      REDIS_URI: "redis://:${REDIS_PASSWORD}@redis:6379"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "gateway-api"
+    expose:
+      - "${GATEWAY_API_PORT}"
+    depends_on:
+      identity-api:
+        condition: "service_started"
+      redis:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  kiwi2shop-productsapi:
+    image: "${KIWI2SHOP_PRODUCTSAPI_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${KIWI2SHOP_PRODUCTSAPI_PORT}"
+      ConnectionStrings__ProductsDb: "Host=PostgresProductsDb;Port=5432;Username=postgres;Password=${POSTGRESPRODUCTSDB_PASSWORD};Database=ProductsDb"
+      PRODUCTSDB_HOST: "PostgresProductsDb"
+      PRODUCTSDB_PORT: "5432"
+      PRODUCTSDB_USERNAME: "postgres"
+      PRODUCTSDB_PASSWORD: "${POSTGRESPRODUCTSDB_PASSWORD}"
+      PRODUCTSDB_URI: "postgresql://postgres:${POSTGRESPRODUCTSDB_PASSWORD}@PostgresProductsDb:5432/ProductsDb"
+      PRODUCTSDB_JDBCCONNECTIONSTRING: "jdbc:postgresql://PostgresProductsDb:5432/ProductsDb"
+      PRODUCTSDB_DATABASE: "ProductsDb"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "kiwi2shop-productsapi"
+    expose:
+      - "${KIWI2SHOP_PRODUCTSAPI_PORT}"
+    depends_on:
+      postgresproductsdb:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  kiwi2shop-ordersapi:
+    image: "${KIWI2SHOP_ORDERSAPI_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${KIWI2SHOP_ORDERSAPI_PORT}"
+      ConnectionStrings__OrdersDb: "Host=PostgresOrdersDb;Port=5432;Username=postgres;Password=${POSTGRESORDERSDB_PASSWORD};Database=OrdersDb"
+      ORDERSDB_HOST: "PostgresOrdersDb"
+      ORDERSDB_PORT: "5432"
+      ORDERSDB_USERNAME: "postgres"
+      ORDERSDB_PASSWORD: "${POSTGRESORDERSDB_PASSWORD}"
+      ORDERSDB_URI: "postgresql://postgres:${POSTGRESORDERSDB_PASSWORD}@PostgresOrdersDb:5432/OrdersDb"
+      ORDERSDB_JDBCCONNECTIONSTRING: "jdbc:postgresql://PostgresOrdersDb:5432/OrdersDb"
+      ORDERSDB_DATABASE: "OrdersDb"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "kiwi2shop-ordersapi"
+    expose:
+      - "${KIWI2SHOP_ORDERSAPI_PORT}"
+    depends_on:
+      postgresordersdb:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  kiwi2shop-frontend:
+    image: "${KIWI2SHOP_FRONTEND_IMAGE}"
+    environment:
+      NODE_ENV: "production"
+      IDENTITY-API_HTTP: "http://identity-api:${IDENTITY_API_PORT}"
+      services__identity-api__http__0: "http://identity-api:${IDENTITY_API_PORT}"
+      IDENTITY-API_HTTPS: "https://identity-api:${IDENTITY_API_PORT}"
+      VITE_IDENTITY_URL: "https://identity-api:${IDENTITY_API_PORT}"
+      PORT: "8000"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "kiwi2shop-frontend"
+    ports:
+      - "8000"
+    networks:
+      - "aspire"
+  kiwi2shop-reverseproxy:
+    image: "${KIWI2SHOP_REVERSEPROXY_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${KIWI2SHOP_REVERSEPROXY_PORT}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "kiwi2shop-reverseproxy"
+    expose:
+      - "${KIWI2SHOP_REVERSEPROXY_PORT}"
+    networks:
+      - "aspire"
+  kiwi2shop-notifications:
+    image: "${KIWI2SHOP_NOTIFICATIONS_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ConnectionStrings__rabbitmq: "amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672"
+      RABBITMQ_HOST: "rabbitmq"
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: "guest"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
+      RABBITMQ_URI: "amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://orderflowclase-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "kiwi2shop-notifications"
+    depends_on:
+      rabbitmq:
+        condition: "service_started"
+    networks:
+      - "aspire"
+networks:
+  aspire:
+    driver: "bridge"
+volumes:
+  postgres:
+    driver: "local"
+  PostgresOrdersDb:
+    driver: "local"
+  PostgresProductsDb:
+    driver: "local"
+  rabbitmq-data:
+    driver: "local"
+  redis-data-identity:
+    driver: "local"

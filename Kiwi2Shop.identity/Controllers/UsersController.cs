@@ -1,4 +1,5 @@
-﻿using Kiwi2Shop.Identity.Models;
+﻿using Asp.Versioning;
+using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +9,10 @@ namespace Kiwi2Shop.Identity.Controllers
 {
 
     [Authorize]
-    [Route("api/[controller]")]
+    [ApiVersion(1)]
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+
     public class UsersController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;

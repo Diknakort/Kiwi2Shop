@@ -1,0 +1,33 @@
+{
+  "projectPath": ".",
+  "outputPath": "./k8s-output",
+  "containerImageTags": [
+    "latest"
+  ],
+  "containerBuilder": "docker",
+  "outputFormat": "kustomize",
+  "privateRegistryEmail": "aspir8@aka.ms",
+  "includeDashboard": true,
+  "secrets": {
+    "salt": "gr\u002BzT63YW85Uv/mb",
+    "hash": "uzWYYoFX4Jg\u002BTPcVLEeEhVhmqeNR6xXlrtFixJ3Zlas=",
+    "secrets": {
+      "postgres-password": {
+        "value": "gr\u002BzT63YW85Uv/mb\u002BTZlUqLWITzUve7kSDA07myCrM0O56XEJdjk/NMKpAAdB7DSyIE="
+      },
+      "PostgresOrdersDb-password": {
+        "value": "gr\u002BzT63YW85Uv/mbiD7MSZ51XWsd46K8t3HwwDmIkq50/I7oDJmG5LA1hzIpM6yn9KU="
+      },
+      "PostgresProductsDb-password": {
+        "value": "gr\u002BzT63YW85Uv/mbYEeNsE\u002Bmp/U\u002BkmoV1HziPGiOtup63KelE/mU/s8ZuXErO4WW7pk="
+      },
+      "rabbitmq-password": {
+        "value": "gr\u002BzT63YW85Uv/mbsYFJFx6rS7iy3oItoy1FRAu6mutJ6LjXPffF/OoJsC0uNYeU1ZQ="
+      },
+      "redis-password": {
+        "value": "gr\u002BzT63YW85Uv/mbUaxOPnscXrP4\u002B/F\u002BZVKVLzmBzNZt2fj\u002BbI7um\u002BQsnz0QOKS08dI="
+      }
+    }
+  },
+  "processAllComponents": true
+}

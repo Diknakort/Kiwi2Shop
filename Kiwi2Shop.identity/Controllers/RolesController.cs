@@ -1,4 +1,5 @@
-﻿using Kiwi2Shop.Identity.Models;
+﻿using Asp.Versioning;
+using Kiwi2Shop.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Kiwi2Shop.identity.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [ApiVersion(1)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+
     public class RolesController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;

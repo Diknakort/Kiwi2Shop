@@ -1,4 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
+builder.AddDockerComposeEnvironment("orderflowclase");
 
 var maildev = builder
     .AddContainer("maildev", "maildev/maildev:latest") // nombre e imagen

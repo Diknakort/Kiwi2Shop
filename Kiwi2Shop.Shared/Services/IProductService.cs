@@ -1,6 +1,6 @@
 ﻿using Kiwi2Shop.Shared.Dto;
 
-namespace Kiwi2Shop.ProductsAPI.Services
+namespace Kiwi2Shop.Shared.Services
 {
     public interface IProductService
     {

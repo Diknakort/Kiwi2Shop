@@ -1,7 +1,7 @@
 ﻿using Kiwi2Shop.Shared.Dto;
 using System.Net.Http.Json;
 
-namespace Kiwi2Shop.ProductsAPI.Services
+namespace Kiwi2Shop.Shared.Services
 {
     public class ProductService : IProductService
     {

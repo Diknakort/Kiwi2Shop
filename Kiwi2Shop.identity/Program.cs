@@ -16,19 +16,15 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
 // Agregar Health checks 
 builder.Services.AddHealthChecks();
-// --
 
 builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
 
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
 
@@ -73,6 +69,9 @@ builder.Services.AddApiVersioning(options =>
 });
 
 
+var jwtSecretKey = builder.Configuration["JWT:SecretKey"] 
+    ?? throw new InvalidOperationException("JWT:SecretKey configuration is missing");
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
@@ -84,7 +83,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = builder.Configuration["JWT:Issuer"],
                 ValidAudience = builder.Configuration["JWT:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
             };
         });
 
@@ -114,12 +113,15 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 // Register AuthService implementation
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Configurar CORS para React
+// Configurar CORS desde appsettings
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
+    ?? new[] { "http://localhost:5173", "https://localhost:5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+        policy.WithOrigins(corsOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // Importante para cookies
@@ -128,13 +130,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    app.UseSwaggerUI();
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.MigrateAsync();

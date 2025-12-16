@@ -15,14 +15,21 @@ namespace Kiwi2Shop.identity.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        private readonly IPublishEndpoint? _publishEndpoint; 
+        private readonly IPublishEndpoint? _publishEndpoint;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IPublishEndpoint? publishEndpoint = null)
+        public AuthService(
+            UserManager<IdentityUser> userManager, 
+            RoleManager<IdentityRole> roleManager, 
+            IConfiguration configuration, 
+            IPublishEndpoint? publishEndpoint = null,
+            ILogger<AuthService>? logger = null)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _publishEndpoint = publishEndpoint;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResponseLogin?> Login(string username, string password)
@@ -50,22 +57,19 @@ namespace Kiwi2Shop.identity.Services
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            // Read JWT configuration (support both "JWT" and "Jwt" keys)
-            var issuer = _configuration["JWT:Issuer"] ?? _configuration["Jwt:Issuer"];
-            var audience = _configuration["JWT:Audience"] ?? _configuration["Jwt:Audience"];
-            var secretKey = _configuration["JWT:SecretKey"] ?? _configuration["Jwt:SecretKey"];
-            var expirationValue = _configuration["JWT:ExpirationMinutes"] ?? _configuration["Jwt:ExpirationMinutes"] ?? _configuration["Logging:JWT:ExpireMinutes"] ?? _configuration["Logging:JWT:ExpirationMinutes"];
-            if (!int.TryParse(expirationValue, out var expirationMinutes)) expirationMinutes = 60;
+            // Read JWT configuration
+            var secretKey = _configuration["JWT:SecretKey"]
+                ?? throw new InvalidOperationException("JWT:SecretKey configuration is missing");
+            var issuer = _configuration["JWT:Issuer"]
+                ?? throw new InvalidOperationException("JWT:Issuer configuration is missing");
+            var audience = _configuration["JWT:Audience"]
+                ?? throw new InvalidOperationException("JWT:Audience configuration is missing");
+            
+            var expirationValue = _configuration["JWT:ExpirationMinutes"] ?? "60";
+            if (!int.TryParse(expirationValue, out var expirationMinutes)) 
+                expirationMinutes = 60;
 
-            if (string.IsNullOrEmpty(secretKey))
-            {
-                // No secret key configured
-                return null;
-            }
-            var key = Environment.GetEnvironmentVariable("JWT:SecretKey") ??
-                throw new ApplicationException("JWT key is not configured.");
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            //var Securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -81,10 +85,11 @@ namespace Kiwi2Shop.identity.Services
             var tokenObj = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(tokenObj);
 
+            _logger.LogInformation("JWT token generated for user: {Username}", username);
+
             return new ResponseLogin
             {
                 Token = tokenString,
-                // Use the descriptor's Expires value to preserve sub-second precision
                 Expiration = tokenDescriptor.Expires ?? tokenObj.ValidTo
             };
         }
@@ -98,15 +103,18 @@ namespace Kiwi2Shop.identity.Services
             }, password);
 
             if (!result.Succeeded)
+            {
+                _logger.LogWarning("Failed to register user: {Username}", username);
                 return false;
+            }
 
             // Try to find the created user and publish an event
             var createdUser = await _userManager.FindByEmailAsync(username);
             if (createdUser != null && _publishEndpoint != null)
             {
                 var userCreatedEvent = new UserCreatedEvent(createdUser.Id, createdUser.Email!);
-
                 await _publishEndpoint.Publish(userCreatedEvent);
+                _logger.LogInformation("User registered and event published: {Username}", username);
             }
 
             return true;

@@ -27,6 +27,6 @@ public class UserRegisteredConsumerClass : IConsumer<UserCreatedEvent>
         // Proporcionar los tres argumentos requeridos: to, subject, body
         var subject = "Bienvenido a Kiwi2Shop";
         var body = $"Hola,\n\nGracias por registrarte en Kiwi2Shop. Tu usuario es: {user.email}.\n\n¡Bienvenido!";
-        return _emailService.SendWellcomeEmail(user.email, subject, body);
+        return _emailService.SendWelcomeEmail(user.email, subject, body);
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Kiwi2Shop.ProductsAPI.Controllers
+namespace Kiwi2Shop.OrdersAPI.Controllers
 {
     [ApiVersion(1)]
     [ApiController]

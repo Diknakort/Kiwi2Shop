@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Kiwi2Shop.Shared;
 using Kiwi2Shop.sAPI.Models;
+using Kiwi2Shop.Shared.Services;
 
-namespace Kiwi2Shop.ProductsAPI.Services
+namespace Kiwi2Shop.OrdersAPI.Services
 {
     public class OrderService
     {
@@ -15,13 +16,14 @@ namespace Kiwi2Shop.ProductsAPI.Services
             _productService = productService;
         }
 
-        public async Task<Order> GetOrderWithProductsAsync(Guid orderId)
+        public async Task<Order?> GetOrderWithProductsAsync(Guid orderId)
         {
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
-            if (order == null) return null;
+            if (order == null) 
+                return null;
 
             // Obtener detalles de productos desde la otra API
             var productIds = order.OrderItems.Select(oi => oi.ProductId).ToList();

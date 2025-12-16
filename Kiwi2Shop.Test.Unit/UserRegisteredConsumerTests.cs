@@ -8,7 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using Kiwi2Shop.ProductsAPI.Services;
+//using Kiwi2Shop.ProductsAPI.Services;
+using Kiwi2Shop.Shared.Services;
 using Kiwi2Shop.Shared.Dto;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
@@ -25,7 +26,7 @@ namespace Kiwi2Shop.Test.Unit
             // Arrange
             var mockEmail = new Mock<IEmailService>();
             mockEmail
-                .Setup(m => m.SendWellcomeEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.SendWelcomeEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             var mockLogger = new Mock<ILogger<UserRegisteredConsumerClass>>();
@@ -41,7 +42,7 @@ namespace Kiwi2Shop.Test.Unit
             await consumer.Consume(mockContext.Object);
 
             // Assert
-            mockEmail.Verify(m => m.SendWellcomeEmail(
+            mockEmail.Verify(m => m.SendWelcomeEmail(
                 It.Is<string>(s => s == userEvent.email),
                 It.Is<string>(sub => sub == "Bienvenido a Kiwi2Shop"),
                 It.Is<string>(body => body != null && body.Contains(userEvent.email))

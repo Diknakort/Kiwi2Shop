@@ -1,8 +1,12 @@
-﻿namespace Kiwi2Shop.ProductsAPI.Services
+﻿namespace Kiwi2Shop.Shared.Services
 {
     public class CreateOrderDto
     {
-        public List<CreateOrderItemDto> Items { get; set; }
+        public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();
+
+        public CreateOrderDto()
+        {
+        }
 
         public CreateOrderDto(List<CreateOrderItemDto> items)
         {

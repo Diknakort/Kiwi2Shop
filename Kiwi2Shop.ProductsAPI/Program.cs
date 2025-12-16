@@ -13,11 +13,18 @@ builder.AddServiceDefaults();
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.AddNpgsqlDbContext<ProductsDbContext>("ProductsDb");
 
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddNpgSql(sp => sp.GetRequiredService<ProductsDbContext>().Database.GetConnectionString()
+        ?? throw new InvalidOperationException("Connection string not found"));
+
 // JWT Bearer
+var jwtSecretKey = builder.Configuration["JWT:SecretKey"]
+    ?? throw new InvalidOperationException("JWT:SecretKey configuration is missing");
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -29,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["JWT:Issuer"],
             ValidAudience = builder.Configuration["JWT:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
         };
     });
 
@@ -38,6 +45,9 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+
+// Health check endpoint
+app.MapHealthChecks("/health");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

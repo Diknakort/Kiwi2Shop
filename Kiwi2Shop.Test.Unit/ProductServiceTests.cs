@@ -2,7 +2,8 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using Kiwi2Shop.ProductsAPI.Services;
+//using Kiwi2Shop.ProductsAPI.Services;
+using Kiwi2Shop.Shared.Services;
 using Kiwi2Shop.Shared.Dto;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert; // Asegúrate de que esta directiva esté presente

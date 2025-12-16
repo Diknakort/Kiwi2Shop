@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.InMemory;
-using Kiwi2Shop.ProductsAPI.Services;
+//using Kiwi2Shop.ProductsAPI.Services;
 using Kiwi2Shop.Shared.Dto;
+using Kiwi2Shop.Shared.Services;
 
 // OrdersDbContext está definido en el proyecto como tipo global (sin namespace)
 #pragma warning disable CS8632

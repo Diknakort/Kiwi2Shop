@@ -3,14 +3,13 @@ using Kiwi2Shop.Shared.Dto;
 
 
 
-namespace Kiwi2Shop.
-    sAPI.Models
+namespace Kiwi2Shop.sAPI.Models
 {
     public class Order
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 
     public class OrderItem
